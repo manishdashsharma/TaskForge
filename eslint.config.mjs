@@ -7,7 +7,7 @@ export default tseslint.config({
     parserOptions: {
       project: [
         './server/tsconfig.json',
-        // './client/tsconfig.json'
+        './client/tsconfig.json'
       ],
       tsconfigRootDir: process.cwd()
     }
