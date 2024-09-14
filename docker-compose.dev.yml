@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  mongo:
+    container_name: mongo_container
+    image: 'mongo'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - queue-net
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    command: mongod --bind_ip_all
+    restart: always
+
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: docker/development/Dockerfile
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./server:/usr/src/app
+    depends_on:
+      - mongo
+    environment:
+      PORT: ${PORT}
+      SERVER_URL: ${SERVER_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_API_KEY: ${EMAIL_API_KEY}
+    networks:
+      - queue-net
+
+networks:
+  queue-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
