@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",           // Client-specific root directory
+    "rootDir": "./",           // Client-specific root directory
     "outDir": "../dist/client"    // Output to dist/client
   },
   "include": [
