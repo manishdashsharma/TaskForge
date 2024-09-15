@@ -1,5 +1,4 @@
 import express, { Application, NextFunction, Request, Response } from 'express'
-import path from 'path'
 import router from './router/apiRouter'
 import globalErrorHandler from './middleware/globalErrorHandler'
 import responseMessage from './constant/responseMessage'
@@ -10,15 +9,8 @@ import cors from 'cors'
 const app: Application = express()
 
 app.use(helmet())
-app.use(
-    cors({
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
-        origin: ['https://client.com'],
-        credentials: true
-    })
-)
+app.use(cors())
 app.use(express.json())
-app.use(express.static(path.join(__dirname, '../', 'public')))
 
 app.use('/api/v1', router)
 

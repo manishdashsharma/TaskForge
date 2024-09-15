@@ -8,11 +8,28 @@ services:
       - mongo-data:/data/db
     networks:
       - queue-net
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    env_file: 
+      - ./.env.development
     command: mongod --bind_ip_all
     restart: always
+
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: docker/development/Dockerfile
+    ports:
+      - '5173:5173'
+    restart: always
+    volumes:
+      - ./client/src:/usr/src/app/src
+      - ./client/package.json:/usr/src/app/package.json
+      - ./client/tsconfig.json:/usr/src/app/tsconfig.json
+      - ./tsconfig.json:/usr/tsconfig.json
+    depends_on:
+      - server
+    networks:
+      - queue-net
 
   server:
     container_name: server
@@ -21,16 +38,16 @@ services:
       dockerfile: docker/development/Dockerfile
     ports:
       - '5000:5000'
+    env_file: 
+      - ./.env.development
     volumes:
-      - ./server:/usr/src/app
+      - ./server/src:/usr/src/app/src
+      - ./server/package.json:/usr/src/app/package.json
+      - ./server/tsconfig.json:/usr/src/app/tsconfig.json
+      - ./server/nodemon.json:/usr/src/app/nodemon.json
+      - ./tsconfig.json:/usr/tsconfig.json
     depends_on:
       - mongo
-    environment:
-      PORT: ${PORT}
-      SERVER_URL: ${SERVER_URL}
-      FRONTEND_URL: ${FRONTEND_URL}
-      DATABASE_URL: ${DATABASE_URL}
-      EMAIL_API_KEY: ${EMAIL_API_KEY}
     networks:
       - queue-net
 

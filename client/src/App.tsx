@@ -1,10 +1,12 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import ServerHealthStatus from './Pages/ServerHealthStatus/ServerHealthStatus';
 
 const App: React.FC = () => {
   return (
-    <h1 className="text-center text-4xl font-bold text-blue-500">
-      Task Forge
-    </h1>
+    <Routes>
+      <Route path="/" element={<ServerHealthStatus />} />
+    </Routes>
   );
 };
 

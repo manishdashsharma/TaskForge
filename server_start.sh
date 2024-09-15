@@ -15,4 +15,4 @@ fi
 # Start the server with Docker Compose
 echo "Starting server using Docker Compose..."
 docker-compose --env-file .env.development -f docker-compose.dev.yml down
-docker-compose --env-file .env.development -f docker-compose.dev.yml up --build server
+docker-compose -f docker-compose.dev.yml up --build server client
