@@ -21,6 +21,8 @@ services:
     ports:
       - '5173:5173'
     restart: always
+    env_file: 
+      - ./.env.development
     volumes:
       - ./client/src:/usr/src/app/src
       - ./client/package.json:/usr/src/app/package.json

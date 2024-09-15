@@ -13,7 +13,7 @@
   "author": "Manish",
   "license": "ISC",
   "lint-staged": {
-    "*.ts": [
+    "*.{ts,tsx}": [
       "npm run lint:fix",
       "npm run format:fix"
     ]
