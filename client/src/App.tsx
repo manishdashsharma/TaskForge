@@ -1,11 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ServerHealthStatus from './Pages/ServerHealthStatus/ServerHealthStatus';
+import Welcome from './Pages/Welcome';
 
 const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<ServerHealthStatus />} />
+      <Route path="/welcome" element={<Welcome/>}/>
     </Routes>
   );
 };

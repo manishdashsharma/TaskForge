@@ -3,7 +3,13 @@
   "compilerOptions": {
     "jsx": "react",
     "rootDir": "./",           // Client-specific root directory
-    "outDir": "../dist/client"    // Output to dist/client
+    "outDir": "../dist/client" ,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }   // Output to dist/client
   },
   "include": [
     "src/**/*",
