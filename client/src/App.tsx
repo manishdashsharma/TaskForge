@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ServerHealthStatus from './Pages/ServerHealthStatus/ServerHealthStatus';
 import Welcome from './Pages/Welcome';
-import Signup from './Pages/auth/Signup';
+import Signup from './Pages/Auth/Signup';
 
 const App: React.FC = () => {
   return (
