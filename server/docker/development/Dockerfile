@@ -10,7 +10,6 @@ COPY nodemon.json ./
 
 # Install dependencies
 RUN npm install
-
 # Copy tsconfig files
 COPY tsconfig.json ./
 COPY ../../tsconfig.json ../

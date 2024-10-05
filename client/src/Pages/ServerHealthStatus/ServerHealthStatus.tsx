@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getServerStatus } from '../../services/api.services'; 
 import { HealthApiResponse } from '../../types/types';
+
 import {
   Container,
   Typography,
@@ -20,6 +21,7 @@ import {
   Info as InfoIcon,
   Language as LanguageIcon,
 } from '@mui/icons-material';
+import TaskForgeLogo from '../../assets/Taskforge.png';
 
 const ServerHealthStatus: React.FC = () => {
   const [status, setStatus] = useState<HealthApiResponse | null>(null);
@@ -50,15 +52,38 @@ const ServerHealthStatus: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ marginTop: '20px', paddingBottom: '40px' }}>
-      <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, textAlign: 'center' }}>
+      <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
+        <img 
+          src={TaskForgeLogo} 
+          alt="TaskForge Logo" 
+          style={{ width: '150px', height: 'auto' }} 
+        />
+      </Box>
+      
+      <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, textAlign: 'center', color: theme.palette.primary.main }}>
         Server Health Status
       </Typography>
       <Grid container spacing={4}>
         
         <Grid item xs={12} md={6}>
-          <Card variant="outlined" sx={{ borderRadius: '16px', boxShadow: 3, background: theme.palette.grey[100] }}>
+          <Card 
+            variant="outlined" 
+            sx={{ 
+              borderRadius: '16px', 
+              boxShadow: 3, 
+              background: theme.palette.grey[50], 
+              transition: '0.3s', 
+              '&:hover': {
+                boxShadow: 6, 
+                background: theme.palette.grey[100],
+              }
+            }}>
             <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: theme.palette.info.main }}>
+              <Typography 
+                variant="h6" 
+                component="h2" 
+                gutterBottom 
+                sx={{ display: 'flex', alignItems: 'center', color: theme.palette.info.main }}>
                 <MemoryIcon sx={{ mr: 1 }} /> Application Information
               </Typography>
               <Divider sx={{ marginBottom: '16px' }} />
@@ -91,11 +116,25 @@ const ServerHealthStatus: React.FC = () => {
           </Card>
         </Grid>
 
-
         <Grid item xs={12} md={6}>
-          <Card variant="outlined" sx={{ borderRadius: '16px', boxShadow: 3, background: theme.palette.grey[100] }}>
+          <Card 
+            variant="outlined" 
+            sx={{ 
+              borderRadius: '16px', 
+              boxShadow: 3, 
+              background: theme.palette.grey[50], 
+              transition: '0.3s', 
+              '&:hover': {
+                boxShadow: 6, 
+                background: theme.palette.grey[100],
+              }
+            }}>
             <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: theme.palette.warning.main }}>
+              <Typography 
+                variant="h6" 
+                component="h2" 
+                gutterBottom 
+                sx={{ display: 'flex', alignItems: 'center', color: theme.palette.warning.main }}>
                 <DeviceHubIcon sx={{ mr: 1 }} /> System Information
               </Typography>
               <Divider sx={{ marginBottom: '16px' }} />
@@ -127,9 +166,24 @@ const ServerHealthStatus: React.FC = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Card variant="outlined" sx={{ borderRadius: '16px', boxShadow: 3, background: theme.palette.grey[100] }}>
+          <Card 
+            variant="outlined" 
+            sx={{ 
+              borderRadius: '16px', 
+              boxShadow: 3, 
+              background: theme.palette.grey[50], 
+              transition: '0.3s', 
+              '&:hover': {
+                boxShadow: 6, 
+                background: theme.palette.grey[100],
+              }
+            }}>
             <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: theme.palette.success.main }}>
+              <Typography 
+                variant="h6" 
+                component="h2" 
+                gutterBottom 
+                sx={{ display: 'flex', alignItems: 'center', color: theme.palette.success.main }}>
                 <LanguageIcon sx={{ mr: 1 }} /> Request Information
               </Typography>
               <Divider sx={{ marginBottom: '16px' }} />
@@ -152,20 +206,35 @@ const ServerHealthStatus: React.FC = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Card variant="outlined" sx={{ borderRadius: '16px', boxShadow: 3, background: theme.palette.grey[100] }}>
+          <Card 
+            variant="outlined" 
+            sx={{ 
+              borderRadius: '16px', 
+              boxShadow: 3, 
+              background: theme.palette.grey[50], 
+              transition: '0.3s', 
+              '&:hover': {
+                boxShadow: 6, 
+                background: theme.palette.grey[100],
+              }
+            }}>
             <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+              <Typography 
+                variant="h6" 
+                component="h2" 
+                gutterBottom 
+                sx={{ display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
                 <InfoIcon sx={{ mr: 1 }} /> Additional Information
               </Typography>
               <Divider sx={{ marginBottom: '16px' }} />
               <Stack spacing={2}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" component="div" sx={{ fontWeight: 'bold' }}>Timestamp:</Typography>
-                  <Typography variant="body2">{new Date(status.data.timestamp).toLocaleString()}</Typography>
+                  <Typography variant="body2" component="div" sx={{ fontWeight: 'bold' }}>Heap Total:</Typography>
+                  <Typography variant="body2">{status.data.application.memoryUsage.heapTotal}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" component="div" sx={{ fontWeight: 'bold' }}>Message:</Typography>
-                  <Typography variant="body2">{status.message}</Typography>
+                  <Typography variant="body2" component="div" sx={{ fontWeight: 'bold' }}>Heap Used:</Typography>
+                  <Typography variant="body2">{status.data.application.memoryUsage.heapUsed}</Typography>
                 </Box>
               </Stack>
             </CardContent>

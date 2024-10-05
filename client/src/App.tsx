@@ -7,7 +7,7 @@ import Signup from './Pages/auth/Signup';
 const App: React.FC = () => {
   return (
     <Routes>
-      <Route path="/health" element={<ServerHealthStatus />} />
+      <Route path="/server-status" element={<ServerHealthStatus />} />
       <Route path="/" element={<Welcome/>}/>
       <Route path="/signup" element={<Signup/>}/>
     </Routes>
