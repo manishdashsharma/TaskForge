@@ -10,6 +10,8 @@ services:
       - queue-net
     env_file: 
       - ./.env.development
+    ports:
+      - "27017:27017"
     command: mongod --bind_ip_all
     restart: always
 

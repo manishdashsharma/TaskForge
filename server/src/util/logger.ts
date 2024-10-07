@@ -8,6 +8,8 @@ import path from 'path'
 import { red, blue, yellow, green, magenta } from 'colorette'
 import * as sourceMapSupport from 'source-map-support'
 import { MongoDBTransportInstance } from 'winston-mongodb'
+import { DiscordWebhookTransport } from './DiscordWebhookTransport';
+
 
 // Linking Trace Support
 sourceMapSupport.install()
@@ -108,17 +110,23 @@ const MongodbTransport = (): Array<MongoDBTransportInstance> => {
             db: config.DATABASE_URL as string,
             metaKey: 'meta',
             expireAfterSeconds: 3600 * 24 * 30,
-            options: {
-                useUnifiedTopology: true
-            },
             collection: 'application-logs'
         })
     ]
 }
 
+const DiscordTransport = (): Array<DiscordWebhookTransport> => {
+    return [
+        new DiscordWebhookTransport({
+            webhookUrl: 'https://discord.com/api/webhooks/1292154448956755978/qJQf8B8ivtBepRjqyABoJDimmksAGM2x2la1SC5TcznlzoPAeQUf-Nf98isATlsJdG9t',
+            level: 'info' // Set the desired log level
+        })
+    ];
+};
+
 export default createLogger({
     defaultMeta: {
         meta: {}
     },
-    transports: [...FileTransport(), ...MongodbTransport(), ...consoleTransport()]
+    transports: [...FileTransport(), ...MongodbTransport(), ...consoleTransport(),...DiscordTransport() ]
 })
