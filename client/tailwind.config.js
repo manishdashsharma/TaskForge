@@ -8,6 +8,7 @@ export default {
   			'forge-darkGreen': '#003E35',
   			'forge-lightGreen': '#66D899',
   			'forge-midGreen': '#1DBA6B',
+			'forge-input-border' : '#E1E1E1',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

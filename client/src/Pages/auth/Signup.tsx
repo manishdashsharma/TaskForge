@@ -3,6 +3,7 @@ import TaskForge from '../../assets/Taskforge.png';
 import SignUp from '../../assets/SignUp.jpg';
 import GoogleIcon from '../../assets/Google.png';
 import GithubIcon from '../../assets/githubicono.png';
+
 const Signup: React.FC = () => {
   return (
     <div className='min-h-screen flex flex-col'>
