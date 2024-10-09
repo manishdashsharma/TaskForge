@@ -7,6 +7,14 @@ import {
     IResetPasswordRequestBody
 } from '../types/userTypes'
 
+import { 
+    ICreateOrganizationRequestBody,
+} from '../types/organisationTypes'
+
+import { 
+    ESubscriptionPlan 
+} from '../constant/organisationStatusConstant'
+
 export const ValidateRegisterBody = joi.object<IRegisterUserRequestBody, true>({
     name: joi.string().min(2).max(72).trim().required(),
     emailAddress: joi.string().email().trim().required(),
@@ -33,6 +41,24 @@ export const ValidateChangePasswordBody = joi.object<IChangePasswordRequestBody,
     newPassword: joi.string().min(8).max(24).trim().required(),
     confirmNewPassword: joi.string().min(8).max(24).trim().valid(joi.ref('newPassword')).required()
 })
+
+export const ValidateCreateOrganizationBody = joi.object<ICreateOrganizationRequestBody, true>({
+    name: joi.string().min(2).max(72).trim().required(),
+    maxProjects: joi.number().integer().min(1).max(1000).required(),
+    maxMembers: joi.number().integer().min(1).max(1000).required(),
+    subscriptionPlan: joi.string().valid(...Object.values(ESubscriptionPlan)).required(),
+    joinSettings: joi.object({
+        allowPublicJoin: joi.boolean().default(true),
+        inviteRequired: joi.boolean().default(false),
+        autoApprove: joi.boolean().default(false)
+    }),
+    tags: joi.array().items(joi.string().min(2).max(50)).min(1).max(10),
+    branding: joi.object({
+        logoUrl: joi.string().optional(),
+        primaryColor: joi.string().optional()
+    }),
+    userId: joi.string().required(),
+});
 
 export const validateJoiSchema = <T>(schema: joi.Schema, value: unknown) => {
     const result = schema.validate(value)

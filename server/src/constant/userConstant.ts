@@ -3,6 +3,5 @@ export enum EUserRole {
     USER = 'User',
     GUEST = 'Guest',
     CLIENT = 'Client',
-    PROJECT_MANAGER = 'Project_Manager',
-    TEAMLEAD = 'Team_Lead'
+    LEAD = 'LEAD'
 }

@@ -21,10 +21,7 @@ export default async (request: Request, _res: Response, next: NextFunction) => {
         }
 
         if (accessToken) {
-            // Verify Token
             const { userId } = quicker.verifyToken(accessToken, config.ACCESS_TOKEN.SECRET as string) as IDecryptedJwt
-
-            // Find User by id
             const user = await databaseService.findUserById(userId)
             if (user) {
                 req.authenticatedUser = user

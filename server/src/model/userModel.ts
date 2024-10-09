@@ -88,9 +88,13 @@ const userSchema = new mongoose.Schema<IUser>(
         consent: {
             type: Boolean,
             required: true
+        },
+        organizationId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Organization'
         }
     },
     { timestamps: true }
 )
 
-export default mongoose.model<IUser>('user', userSchema)
+export default mongoose.model<IUser>('User', userSchema)

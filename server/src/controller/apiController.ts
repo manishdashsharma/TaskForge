@@ -9,7 +9,8 @@ import {
     validateJoiSchema,
     ValidateLoginBody,
     ValidateRegisterBody,
-    ValidateResetPasswordBody
+    ValidateResetPasswordBody,
+    ValidateCreateOrganizationBody
 } from '../service/validationService'
 import {
     IChangePasswordRequestBody,
@@ -22,6 +23,13 @@ import {
     IUser,
     IUserWithId
 } from '../types/userTypes'
+import { 
+    IOrganization,
+    ICreateOrganizationRequestBody 
+} from '../types/organisationTypes'
+import { 
+    EOrganizationStatus 
+} from '../constant/organisationStatusConstant'
 import databaseService from '../service/databaseService'
 import { EUserRole } from '../constant/userConstant'
 import emailService from '../service/emailService'
@@ -67,6 +75,10 @@ interface IResetPasswordRequest extends Request {
 interface IChangePasswordRequest extends Request {
     authenticatedUser: IUserWithId
     body: IChangePasswordRequestBody
+}
+
+interface ICreateOrganizationRequest extends Request {
+    body: ICreateOrganizationRequestBody
 }
 
 export default {
@@ -144,7 +156,8 @@ export default {
                     lastResetAt: null
                 },
                 lastLoginAt: null,
-                role: EUserRole.USER,
+                role: EUserRole.ADMIN,
+                organizationId : null,
                 timezone: timezone[0].name,
                 password: encryptedPassword,
                 consent
@@ -533,5 +546,71 @@ export default {
         } catch (err) {
             httpError(next, err, req, 500)
         }
-    }
+    },
+    createOrganisation: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { body } = req as ICreateOrganizationRequest
+
+            const { error, value } = validateJoiSchema<ICreateOrganizationRequestBody>(ValidateCreateOrganizationBody, body)
+            
+            if (error) {
+                return httpError(next, error, req, 422)
+            }
+            const { name, maxProjects, maxMembers, userId, subscriptionPlan, tags, branding } = value
+
+            const existingUser = await databaseService.findUserById(userId)
+
+            if (!existingUser) {
+                return httpError(next, new Error(responseMessage.NOT_FOUND('user')), req, 404)
+            }
+
+            const payload : IOrganization = {
+                name,
+                maxProjects,
+                maxMembers,
+                isActive: true,
+                status: EOrganizationStatus.ACTIVE,
+                totalMembersByRole: {
+                    [EUserRole.ADMIN]: 1,
+                    [EUserRole.USER]: 0,
+                    [EUserRole.GUEST]: 0,
+                    [EUserRole.CLIENT]: 0,
+                    [EUserRole.LEAD]: 0
+                },
+                subscriptionPlan,
+                subscriptionExpiresAt: dayjs().utc().add(1, 'year').toDate(),
+                billingDetails: {
+                    cardLast4Digits: null,
+                    billingEmail: null
+                },
+                projects: [
+                    { projectId: null , name: null , isActive: false }
+                ],
+                joinSettings: { allowPublicJoin: true, inviteRequired: true, autoApprove: false },
+                tags: tags || [],
+                customFields: {},
+                branding: { 
+                    logoUrl: branding?.logoUrl, 
+                    primaryColor: null 
+                }
+            }
+
+            const newOrganization = await databaseService.createOrganisation(payload)
+      
+
+            if(!newOrganization){
+                return httpError(next, new Error(responseMessage.SOMETHING_WENT_WRONG), req, 500)
+            }
+
+            const updateOrganizationIdToUser = await databaseService.findByUserIdAndUpdateOrganizationId(userId,newOrganization._id.toString())
+
+            if(!updateOrganizationIdToUser){
+                return httpError(next, new Error(responseMessage.SOMETHING_WENT_WRONG), req, 500)
+            }
+
+            httpResponse(req, res, 201, responseMessage.SUCCESS, {_id: newOrganization})
+        } catch (err) {
+            httpError(next, err, req, 500)
+        }
+    },
 }

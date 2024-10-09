@@ -24,7 +24,8 @@ export interface IUser {
         lastResetAt: Date | null
     }
     lastLoginAt: Date | null
-    consent: boolean
+    consent: boolean,
+    organizationId: string | null
 }
 
 export interface IUserWithId extends IUser {

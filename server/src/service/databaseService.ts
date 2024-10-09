@@ -3,6 +3,8 @@ import config from '../config/config'
 import userModel from '../model/userModel'
 import { IRefreshToken, IUser } from '../types/userTypes'
 import refreshTokenModel from '../model/refreshTokenModel'
+import { IOrganization } from '../types/organisationTypes'
+import organisationModel from '../model/organisationModel'
 
 export default {
     connect: async () => {
@@ -45,5 +47,11 @@ export default {
     },
     findRefreshToken: (token: string) => {
         return refreshTokenModel.findOne({ token })
+    },
+    createOrganisation: (payload: IOrganization) => {
+        return organisationModel.create(payload)
+    },
+    findByUserIdAndUpdateOrganizationId: (id: string, organizationId: string) => {
+        return userModel.findByIdAndUpdate(id, { organizationId }, { new: true })
     }
 }
