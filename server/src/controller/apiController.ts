@@ -22,7 +22,6 @@ import {
     IRegisterUserRequestBody,
     IResetPasswordRequestBody,
     IUser,
-    IUserWithId
 } from '../types/userTypes'
 import { 
     IOrganization,
@@ -32,6 +31,21 @@ import {
 import { 
     EOrganizationStatus,
 } from '../constant/organisationConstant'
+
+import {
+    IRegisterRequest,
+    IConfirmRequest,
+    ILoginRequest,
+    ISelfIdentificationRequest,
+    IForgotPasswordRequest,
+    IResetPasswordRequest,
+    IChangePasswordRequest,
+    ICreateOrganizationRequest,
+    IInviteUserRequest,
+    IConfirmInvitationRequest,
+    IUpdateUserToOrganisation
+} from '../types/payloadTypes'
+
 import databaseService from '../service/databaseService'
 import { EUserRole } from '../constant/userConstant'
 import emailService from '../service/emailService'
@@ -42,67 +56,6 @@ import utc from 'dayjs/plugin/utc'
 import { EApplicationEnvironment } from '../constant/application'
 
 dayjs.extend(utc)
-interface IRegisterRequest extends Request {
-    body: IRegisterUserRequestBody
-}
-
-interface IConfirmRequest extends Request {
-    params: {
-        token: string
-    }
-    query: {
-        code: string
-    }
-}
-
-interface ILoginRequest extends Request {
-    body: ILoginUserRequestBody
-}
-
-interface ISelfIdentificationRequest extends Request {
-    authenticatedUser: IUser
-}
-
-interface IForgotPasswordRequest extends Request {
-    body: IForgotPasswordRequestBody
-}
-
-interface IResetPasswordRequest extends Request {
-    params: {
-        token: string
-    }
-    body: IResetPasswordRequestBody
-}
-
-interface IChangePasswordRequest extends Request {
-    authenticatedUser: IUserWithId
-    body: IChangePasswordRequestBody
-}
-
-interface ICreateOrganizationRequest extends Request {
-    body: ICreateOrganizationRequestBody
-}
-
-interface IInviteUserRequest extends Request {
-    body: IInviteUserRequestBody
-    
-}
-
-interface IConfirmInvitationRequest extends Request {
-    params: {
-        organizationId: string
-    }
-    query: {
-        code: string
-    }
-}
-
-interface IUpdateUserToOrganisation extends Request {
-    params: {
-        userId: string
-        organizationId: string
-    }
-}
 
 export default {
     self: (req: Request, res: Response, next: NextFunction) => {
@@ -735,7 +688,20 @@ export default {
                 return httpError(next, responseMessage.SOMETHING_WENT_WRONG, req, 500)
             }
 
-            httpResponse(req, res, 200, responseMessage.SUCCESS)
+            const findUserRole = await databaseService.findUserById(userId)
+
+            if(!findUserRole) {
+                return httpError(next, responseMessage.NOT_FOUND('user'), req, 404)
+            }
+
+
+            const updateEUserRoleCountForOrganisation = await databaseService.updateEUserRoleCount(organizationId, findUserRole.role);
+
+            if (!updateEUserRoleCountForOrganisation) {
+                return httpError(next, responseMessage.SOMETHING_WENT_WRONG, req, 500);
+            }
+
+            httpResponse(req, res, 200, responseMessage.SUCCESS, findUserRole.role)
         } catch (err) {
             httpError(next, err, req, 500)
         }

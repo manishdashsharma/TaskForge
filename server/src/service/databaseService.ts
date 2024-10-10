@@ -66,5 +66,12 @@ export default {
     },
     updateUserOrganizationId: (id: string, organizationId: string) => {
         return userModel.findByIdAndUpdate(id, { organizationId }, { new: true })
+    },
+    updateEUserRoleCount: (id: string, role: string) => {
+        return organisationModel.findByIdAndUpdate(
+            id,
+            { $inc: { [`totalMembersByRole.${role}`]: 1 } },
+            { new: true }
+        )
     }
 }
