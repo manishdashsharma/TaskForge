@@ -10,7 +10,8 @@ import {
     ValidateLoginBody,
     ValidateRegisterBody,
     ValidateResetPasswordBody,
-    ValidateCreateOrganizationBody
+    ValidateCreateOrganizationBody,
+    ValidateInviteUserRequestBody,
 } from '../service/validationService'
 import {
     IChangePasswordRequestBody,
@@ -25,11 +26,12 @@ import {
 } from '../types/userTypes'
 import { 
     IOrganization,
-    ICreateOrganizationRequestBody 
+    ICreateOrganizationRequestBody,
+    IInviteUserRequestBody,
 } from '../types/organisationTypes'
 import { 
-    EOrganizationStatus 
-} from '../constant/organisationStatusConstant'
+    EOrganizationStatus,
+} from '../constant/organisationConstant'
 import databaseService from '../service/databaseService'
 import { EUserRole } from '../constant/userConstant'
 import emailService from '../service/emailService'
@@ -81,6 +83,27 @@ interface ICreateOrganizationRequest extends Request {
     body: ICreateOrganizationRequestBody
 }
 
+interface IInviteUserRequest extends Request {
+    body: IInviteUserRequestBody
+    
+}
+
+interface IConfirmInvitationRequest extends Request {
+    params: {
+        organizationId: string
+    }
+    query: {
+        code: string
+    }
+}
+
+interface IUpdateUserToOrganisation extends Request {
+    params: {
+        userId: string
+        organizationId: string
+    }
+}
+
 export default {
     self: (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -111,7 +134,7 @@ export default {
                 return httpError(next, error, req, 422)
             }
 
-            const { name, emailAddress, password, phoneNumber, consent } = value
+            const { name, emailAddress, password, phoneNumber, consent, role } = value
 
             const { countryCode, isoCode, internationalNumber } = quicker.parsePhoneNumber(`+` + phoneNumber)
 
@@ -135,7 +158,7 @@ export default {
 
             const token = quicker.generateRandomId()
             const code = quicker.generateOtp(6)
-
+            
             const payload: IUser = {
                 name,
                 emailAddress,
@@ -156,7 +179,7 @@ export default {
                     lastResetAt: null
                 },
                 lastLoginAt: null,
-                role: EUserRole.ADMIN,
+                role: role ? role : EUserRole.USER,
                 organizationId : null,
                 timezone: timezone[0].name,
                 password: encryptedPassword,
@@ -592,12 +615,16 @@ export default {
                 branding: { 
                     logoUrl: branding?.logoUrl, 
                     primaryColor: null 
+                },
+                invitationLink: {
+                    link: null,
+                    expiredAt: null,
+                    code: null
                 }
             }
 
             const newOrganization = await databaseService.createOrganisation(payload)
       
-
             if(!newOrganization){
                 return httpError(next, new Error(responseMessage.SOMETHING_WENT_WRONG), req, 500)
             }
@@ -613,4 +640,104 @@ export default {
             httpError(next, err, req, 500)
         }
     },
-}
+    organisationIdentification: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { authenticatedUser } = req as ISelfIdentificationRequest
+
+            if (!authenticatedUser.organizationId) {
+                return httpResponse(req, res, 400, responseMessage.INVALID_ORGANIZATION_ID);
+            }    
+            const organizationDetails = await databaseService.findOrganizationDetailsById(authenticatedUser.organizationId)
+            httpResponse(req, res, 200, responseMessage.SUCCESS, organizationDetails)
+        } catch (err) {
+            httpError(next, err, req, 500)
+        }
+    },
+    inviteUserToOrganization: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { body } = req as IInviteUserRequest
+
+            const { error, value } = validateJoiSchema<IInviteUserRequestBody>(ValidateInviteUserRequestBody, body)
+
+            if (error) {
+                return httpError(next, error, req, 422)
+            }
+            const { organizationId, expiredAt } = value
+
+            const checkOrganisationDetails = await databaseService.findOrganizationDetailsById(organizationId)
+            
+            if (!checkOrganisationDetails) {
+                return httpError(next, new Error(responseMessage.NOT_FOUND('organization')), req, 404)
+            }
+
+            const code = quicker.generateOtp(6)
+            const invitationLink = `${config.FRONTEND_URL}/join/${organizationId}/?code=${code}`
+            const expiredAtStatus = quicker.generateExpirationStatus(expiredAt)
+
+            if (expiredAtStatus === null) {
+                return httpError(next, responseMessage.INVALID_EXPIRATION_DATE, req, 400);
+            }
+
+            const saveInvitationLink = await databaseService.findOrganisationByIdAndUpdate(organizationId, code, invitationLink, expiredAtStatus.toISOString())
+            
+            if(!saveInvitationLink) {
+                return httpError(next,responseMessage.SOMETHING_WENT_WRONG, req, 500)
+            }
+            httpResponse(req, res, 200, responseMessage.SUCCESS, { invitationLink, code }) 
+        } catch (err) {
+            httpError(next, err, req, 500)
+        }
+    },
+    confirmUserInvitation: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { params, query } = req as IConfirmInvitationRequest
+
+            const { organizationId } = params
+            const { code } = query
+            
+            const checkOrganisationDetails = await databaseService.findOrganizationDetailsById(organizationId)
+
+            if (!checkOrganisationDetails) {
+                return httpError(next, responseMessage.NOT_FOUND('organization'), req, 404)
+            }
+            const invitationLink = checkOrganisationDetails.invitationLink;
+
+            if (invitationLink?.code !== code) {
+                return httpError(next, responseMessage.INVALID_INVITE_CODE, req, 403);
+            }
+            const currentDate = dayjs();
+            const expiredAtDate = dayjs(invitationLink.expiredAt); 
+
+            if (currentDate.isAfter(expiredAtDate)) {
+                return httpError(next, responseMessage.EXPIRED_INVITE_LINK, req, 403);
+            }
+
+            httpResponse(req, res, 200, responseMessage.SUCCESS )
+        } catch (err) {
+            httpError(next, err, req, 500)
+        }
+    },
+    updateOrganizationDetails: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { params } = req as IUpdateUserToOrganisation
+
+            const { userId,organizationId } = params
+
+            const organizationDetails = await databaseService.findOrganizationDetailsById(organizationId)
+
+            if(!organizationDetails) {
+                return httpError(next,responseMessage.NOT_FOUND('organization'), req, 404)
+            }
+
+            const updateUserOrganizationId = await databaseService.updateUserOrganizationId(userId,organizationId)
+
+            if(!updateUserOrganizationId) {
+                return httpError(next, responseMessage.SOMETHING_WENT_WRONG, req, 500)
+            }
+
+            httpResponse(req, res, 200, responseMessage.SUCCESS)
+        } catch (err) {
+            httpError(next, err, req, 500)
+        }
+    }
+}   

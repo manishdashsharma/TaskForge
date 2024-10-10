@@ -91,4 +91,5 @@ We welcome contributions! Please fork the repository and submit a pull request f
 - [Fagbayibo](https://github.com/Fagbayibo) 🌐
 - [Archit Verma](https://github.com/architverma001) 📅
 - [Abhishek Kumar](https://github.com/abhishekkumar-githb) ✨
+- [Naima Noor](https://github.com/Naima-Noor) 💻
 

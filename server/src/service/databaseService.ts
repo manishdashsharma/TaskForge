@@ -53,5 +53,18 @@ export default {
     },
     findByUserIdAndUpdateOrganizationId: (id: string, organizationId: string) => {
         return userModel.findByIdAndUpdate(id, { organizationId }, { new: true })
+    },
+    findOrganizationDetailsById: (id: string) => {
+        return organisationModel.findById(id);
+    },
+    findOrganisationByIdAndUpdate: (id:string, code: string, link: string, expiredAt: string) => {
+        return organisationModel.findByIdAndUpdate(id, { 
+            'invitationLink.link': link,         
+            'invitationLink.expiredAt': expiredAt, 
+            'invitationLink.code': code           
+        }, { new: true });
+    },
+    updateUserOrganizationId: (id: string, organizationId: string) => {
+        return userModel.findByIdAndUpdate(id, { organizationId }, { new: true })
     }
 }

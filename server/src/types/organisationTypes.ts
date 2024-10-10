@@ -1,5 +1,5 @@
 import { EUserRole } from '../constant/userConstant'
-import { EOrganizationStatus, ESubscriptionPlan } from '../constant/organisationStatusConstant'
+import { EOrganizationStatus, ESubscriptionPlan,EInvitationLinkExpirationStatus } from '../constant/organisationConstant'
 
 
 export interface IOrganization {                
@@ -33,6 +33,11 @@ export interface IOrganization {
         logoUrl?: string;
         primaryColor?: string | null;
     };
+    invitationLink?: {
+        link: string | null;
+        expiredAt: Date | null;
+        code: string | null;
+    }
 }
 
 export interface ICreateOrganizationRequestBody {
@@ -51,4 +56,9 @@ export interface ICreateOrganizationRequestBody {
         primaryColor?: string;
     };
     userId: string;
+}
+
+export interface IInviteUserRequestBody {
+    organizationId: string;
+    expiredAt: EInvitationLinkExpirationStatus;
 }

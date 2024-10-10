@@ -24,5 +24,9 @@ router.route('/change-password').put(authentication, apiController.changePasswor
 
 // Organisation routes
 router.route('/create-organisation').post(authentication, authorize([EUserRole.ADMIN]), apiController.createOrganisation)
+router.route('/organisation-identification').get(authentication, apiController.organisationIdentification)
+router.route('/create-invitation-link').post(authentication,authorize([EUserRole.ADMIN]), apiController.inviteUserToOrganization)
+router.route('/confirm-user-invitation/:organizationId').get(apiController.confirmUserInvitation)
+router.route('/update-organization-details/:organizationId/:userId').get(authentication,apiController.updateOrganizationDetails)
 
 export default router

@@ -9,18 +9,25 @@ import {
 
 import { 
     ICreateOrganizationRequestBody,
+    IInviteUserRequestBody
 } from '../types/organisationTypes'
 
 import { 
-    ESubscriptionPlan 
-} from '../constant/organisationStatusConstant'
+    ESubscriptionPlan,
+    EInvitationLinkExpirationStatus
+} from '../constant/organisationConstant'
+
+import { 
+    EUserRole 
+} from '../constant/userConstant'
 
 export const ValidateRegisterBody = joi.object<IRegisterUserRequestBody, true>({
     name: joi.string().min(2).max(72).trim().required(),
     emailAddress: joi.string().email().trim().required(),
     phoneNumber: joi.string().min(4).max(20).trim().required(),
     password: joi.string().min(8).max(24).trim().required(),
-    consent: joi.boolean().valid(true).required()
+    consent: joi.boolean().valid(true).required(),
+    role: joi.string().valid(...Object.values(EUserRole)).optional(),
 })
 
 export const ValidateLoginBody = joi.object<ILoginUserRequestBody, true>({
@@ -60,6 +67,10 @@ export const ValidateCreateOrganizationBody = joi.object<ICreateOrganizationRequ
     userId: joi.string().required(),
 });
 
+export const ValidateInviteUserRequestBody = joi.object<IInviteUserRequestBody, true>({
+    organizationId: joi.string().required(),
+    expiredAt: joi.string().valid(...Object.values(EInvitationLinkExpirationStatus))
+})
 export const validateJoiSchema = <T>(schema: joi.Schema, value: unknown) => {
     const result = schema.validate(value)
 
@@ -68,3 +79,4 @@ export const validateJoiSchema = <T>(schema: joi.Schema, value: unknown) => {
         error: result.error
     }
 }
+

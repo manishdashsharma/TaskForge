@@ -7,6 +7,7 @@ import { v4 } from 'uuid'
 import { randomInt } from 'crypto'
 import jwt from 'jsonwebtoken'
 import dayjs from 'dayjs'
+import { EInvitationLinkExpirationStatus } from '../constant/organisationConstant'
 
 export default {
     getSystemHealth: () => {
@@ -85,5 +86,18 @@ export default {
     },
     generateResetPasswordExpiry: (minute: number) => {
         return dayjs().valueOf() + minute * 60 * 1000
+    },
+    generateExpirationStatus: (status: EInvitationLinkExpirationStatus): Date | null => {
+        switch (status) {
+            case EInvitationLinkExpirationStatus.EXPIRED_WITHIN_1_DAY:
+                return dayjs().utc().add(1, 'day').toDate();
+            case EInvitationLinkExpirationStatus.EXPIRED_WITHIN_7_DAYS:
+                return dayjs().utc().add(7, 'days').toDate();
+            case EInvitationLinkExpirationStatus.EXPIRED_WITHIN_30_DAYS:
+                return dayjs().utc().add(30, 'days').toDate();
+            default:
+                return null;
+        }
     }
+    
 }

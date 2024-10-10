@@ -42,6 +42,7 @@ export interface IRegisterUserRequestBody {
     phoneNumber: string
     password: string
     consent: boolean
+    role?: EUserRole
 }
 
 export interface ILoginUserRequestBody {

@@ -14,5 +14,9 @@ export default {
     INVALID_REQUEST: `Invalid request`,
     INVALID_OLD_PASSWORD: `Invalid old password`,
     PASSWORD_MATCHING_WITH_OLD_PASSWORD: `Password matching with old password`,
-    FORBIDDEN: `You are not allowed to perform this action`
+    FORBIDDEN: `You are not allowed to perform this action`,
+    INVALID_ORGANIZATION_ID: `Invalid organization or organization not found`,
+    INVALID_EXPIRATION_DATE: `Failed to generated expiration date`,
+    INVALID_INVITE_CODE: `Invalid invite code`,
+    EXPIRED_INVITE_LINK: `Invite link has expired`
 }

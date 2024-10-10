@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { IOrganization } from '../types/organisationTypes';
 import { EUserRole } from '../constant/userConstant';
-import { EOrganizationStatus, ESubscriptionPlan } from '../constant/organisationStatusConstant';
+import { EOrganizationStatus, ESubscriptionPlan, EInvitationLinkExpirationStatus } from '../constant/organisationConstant';
 
 const organisationSchema = new mongoose.Schema<IOrganization>({
     name: {
@@ -73,6 +73,21 @@ const organisationSchema = new mongoose.Schema<IOrganization>({
         allowPublicJoin: { type: Boolean, default: false },
         inviteRequired: { type: Boolean, default: true },
         autoApprove: { type: Boolean, default: false },
+    },
+    invitationLink: {
+        link: { 
+            type: String , 
+            required: false
+        },
+        expiredAt: { 
+            type: String, 
+            enum:EInvitationLinkExpirationStatus, 
+            default: EInvitationLinkExpirationStatus.EXPIRED_WITHIN_1_DAY
+        }, 
+        code: {
+            type: String,
+        },
+        
     },
     tags: [{ type: String, trim: true }],
     customFields: {
