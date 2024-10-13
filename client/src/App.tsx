@@ -4,6 +4,7 @@ import ServerHealthStatus from './Pages/ServerHealthStatus/ServerHealthStatus';
 import Welcome from './Pages/Welcome';
 import SignUp from './Pages/Auth/SignUp/SignUp';
 import SignIn from './Pages/Auth/SignIn/SignIn';
+import ProfilePage from './Pages/ProfilePage/ProfilePage';
 
 
 const App: React.FC = () => {
@@ -16,6 +17,10 @@ const App: React.FC = () => {
         <Route path="sign-up" element={<SignUp />} />
         <Route path = "sign-in" element={<SignIn/>} />
       </Route>
+      {/* Account */}
+      <Route path='account' element={<Outlet/>}>
+      <Route path='account/profile' element={<ProfilePage/>}/>
+      </Route> 
     </Routes>
   );
 };
