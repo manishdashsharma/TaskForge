@@ -1,3 +1,6 @@
+ 
+ 
+ 
 import * as Yup from 'yup'
 
 export const signupSchema = Yup.object().shape({
@@ -18,5 +21,5 @@ phoneNumber: Yup.string()
     .min(6, 'Password must be at least 6 characters'),
   confirmPassword: Yup.string()
     .required('Confirm Password is required')
-    .oneOf([Yup.ref('password'), " "], 'Passwords must match'),
+    .oneOf([Yup.ref('password'), ' '], 'Passwords must match'),
 })
