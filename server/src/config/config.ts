@@ -9,6 +9,8 @@ export default {
     DATABASE_URL: process.env.DATABASE_URL,
     FRONTEND_URL: process.env.FRONTEND_URL,
     EMAIL_API_KEY: process.env.EMAIL_API_KEY,
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     ACCESS_TOKEN: {
         SECRET: process.env.ACCESS_TOKEN_SECRET,
         EXPIRY: 3600
@@ -16,6 +18,6 @@ export default {
     REFRESH_TOKEN: {
         SECRET: process.env.REFRESH_TOKEN_SECRET,
         EXPIRY: 3600 * 24 * 365
-    }
+    },
 }
 

@@ -7,15 +7,16 @@ import httpError from './util/httpError'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import passport from './config/passport';
 
 const app: Application = express()
 
-// Middleware
 app.use(helmet())
 app.use(cookieParser())
 app.use(cors())
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../', 'public')))
+app.use(passport.initialize());
 
 app.use('/api/v1', router)
 
