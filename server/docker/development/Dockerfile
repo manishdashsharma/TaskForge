@@ -9,7 +9,7 @@ COPY package*.json ./
 COPY nodemon.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 # Copy tsconfig files
 COPY tsconfig.json ./
 COPY ../../tsconfig.json ../
