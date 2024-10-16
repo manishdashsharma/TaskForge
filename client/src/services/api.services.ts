@@ -6,6 +6,11 @@ const getServerStatus = async (): Promise<HealthApiResponse> => {
   return response.data;
 };
 
+const SignUpapi = async (data: any) => {
+  const response = await servicesAxiosInstance.post('/api/v1/register', data);
+  return response.data;
+};
+
 export {
-  getServerStatus
+  getServerStatus,SignUpapi
 };

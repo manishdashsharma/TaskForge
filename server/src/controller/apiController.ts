@@ -136,7 +136,7 @@ export default {
                 organizationId : null,
                 timezone: timezone[0].name,
                 password: encryptedPassword,
-                consent
+                consent:consent
             }
 
             const newUser = await databaseService.registerUser(payload)

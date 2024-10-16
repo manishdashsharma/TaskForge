@@ -5,6 +5,7 @@
     "rootDir": "./",           // Client-specific root directory
     "outDir": "../dist/client" ,
     "baseUrl": ".",
+  
     "paths": {
       "@/*": [
         "./src/*"
