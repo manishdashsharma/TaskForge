@@ -75,7 +75,7 @@ const SignUp: React.FC = () => {
                 <div className='flex gap-5 flex-col md:flex-row'>
                   <div className='flex flex-col gap-1 justify-center'>
                     <Label htmlFor='firstName' className='font-poppins text-[15px] font-normal'>Name</Label>
-                    <input type='text' {...register('name')} placeholder='Andrea' className='w-full md:w-[300px] h-11 focus-visible:outline-none px-4 rounded-md font-poppins text-[14px] border border-forge-input-border' />
+                    <input type='text' {...register('name')} placeholder='Andrea' className='w-full h-11 focus-visible:outline-none pl-4 rounded-md font-poppins text-[14px] border border-forge-input-border' />
                     {errors.name && (
                       <p className='font-poppins font-normal text-yellow-600 text-[13px] flex gap-1 items-center'><RiErrorWarningFill className='text-yellow-600 size-4' /> {errors.name.message}</p>
                     )}
