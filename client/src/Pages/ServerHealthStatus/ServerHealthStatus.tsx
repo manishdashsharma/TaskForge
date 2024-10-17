@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getServerStatus } from '../../services/api.services'; 
-import { HealthApiResponse } from '../../types/types';
+import { HealthApiResponse } from '../../types/healthTypes';
 
 import {
   Container,

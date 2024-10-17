@@ -1,5 +1,7 @@
 import axios from 'axios';
 import TransportStream from 'winston-transport';
+import config from '../config/config'
+
 
 interface DiscordWebhookTransportOptions {
     webhookUrl: string;
@@ -23,11 +25,11 @@ export class DiscordWebhookTransport extends TransportStream {
     }
 
     log(info: LogInfo, callback: () => void): void {
-        const { level, message, timestamp, meta = {} } = info;
+        const {level, message, timestamp, meta = {} } = info;
         const logTimestamp = timestamp || new Date().toISOString();
 
         const logMessage = {
-            username: 'Logger Bot',
+            username: `Logger Bot by ${config.USER}`,
             content: `**Level**: ${level.toUpperCase()}\n**Timestamp**: ${logTimestamp}\n**Message**: ${message}\n**Meta**: \`\`\`json\n${JSON.stringify(meta, null, 2)}\`\`\``
         };
 

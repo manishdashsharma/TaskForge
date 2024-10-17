@@ -4,11 +4,9 @@ import axios, { AxiosInstance } from 'axios';
 const baseURL = import.meta.env.VITE_SERVER_URL as string;
 
 const servicesAxiosInstance: AxiosInstance = axios.create({
-    
     baseURL: baseURL
 });
 
-console.log(baseURL);
 
 export {
   servicesAxiosInstance

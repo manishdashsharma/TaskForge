@@ -19,5 +19,6 @@ export default {
         SECRET: process.env.REFRESH_TOKEN_SECRET,
         EXPIRY: 3600 * 24 * 365
     },
+    USER: process.env.USER
 }
 
