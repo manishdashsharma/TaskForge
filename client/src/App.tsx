@@ -7,12 +7,13 @@ import SignUp from './Pages/auth/SignUp/SignUp';
 import SignIn from './Pages/auth/SignIn/SignIn';
 import ProfilePage from './Pages/ProfilePage/ProfilePage';
 import ForgotPassword from './Pages/auth/ForgotPassword/ForgotPassword';
+import ResetPassword from './Pages/auth/ResetPassword/ResetPassword';
 
 const App: React.FC = () => {
   return (
     <>
       <Toaster reverseOrder={false} />
-      
+
       <Routes>
         <Route path="/health" element={<ServerHealthStatus />} />
         <Route path="/" element={<Welcome />} />
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <Route path="sign-up" element={<SignUp />} />
           <Route path="sign-in" element={<SignIn />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
         </Route>
         <Route path="account" element={<Outlet />}>
           <Route path="profile" element={<ProfilePage />} />
