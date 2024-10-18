@@ -63,7 +63,7 @@ fi
 echo "Starting $SERVICES using Docker Compose..."
 
 # Start the services with Docker Compose
-docker-compose --env-file .env.development -f docker-compose.dev.yml up --build $SERVICES
+docker-compose --env-file .env.development -f docker-compose.dev.yml up  $SERVICES
 
 # Notify user of successful start
 echo "$SERVICES have been successfully started!"
