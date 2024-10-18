@@ -19,6 +19,10 @@ export default {
         SECRET: process.env.REFRESH_TOKEN_SECRET,
         EXPIRY: 3600 * 24 * 365
     },
-    USER: process.env.USER
+    USER: process.env.USER,
+    EMAIL_USER : process.env.EMAIL_USER,
+    EMAIL_PASSWORD : process.env.EMAIL_PASSWORD,
+    SMTP_MAIL_HOST: process.env.SMTP_MAIL_HOST,
+    SMTP_MAIL_PORT: process.env.SMTP_MAIL_PORT
 }
 

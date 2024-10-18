@@ -17,9 +17,6 @@ export interface SignUpData {
     message: string;
     data: {
       _id: string;
-      token: string;
-      code: string;
-      confirmationUrl: string;
     };
   }
   

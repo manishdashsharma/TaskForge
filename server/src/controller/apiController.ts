@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NextFunction, Request, Response } from 'express'
 import httpResponse from '../util/httpResponse'
 import responseMessage from '../constant/responseMessage'
@@ -54,6 +55,13 @@ import logger from '../util/logger'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { EApplicationEnvironment } from '../constant/application'
+import { 
+    generateConfirmationEmailHtml, 
+    generatePasswordResetHtml,
+    generateAccountConfirmedHtml,
+    generatePasswordResetRequestHtml,
+    generatePasswordChangedHtml
+} from '../service/htmlService'
 
 dayjs.extend(utc)
 
@@ -146,14 +154,15 @@ export default {
             const subject = 'Confirm Your Account'
             const text = `Hey ${name}, Please confirm your account by clicking on the link below\n\n${confirmationUrl}`
 
-            emailService.sendEmail(to, subject, text).catch((err) => {
-                logger.error(`EMAIL_SERVICE`, {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    meta: err
-                })
-            })
+            const html = generateConfirmationEmailHtml(name, confirmationUrl);
 
-            httpResponse(req, res, 201, responseMessage.SUCCESS, { _id: newUser._id, token: token, code: code, confirmationUrl: confirmationUrl})
+            emailService.sendEmail(to, subject, text, html).catch((err) => {
+                logger.error('EMAIL_SERVICE', {
+                    meta: err,
+                });
+            });
+
+            httpResponse(req, res, 201, responseMessage.SUCCESS, { _id: newUser._id})
         } catch (err) {
             httpError(next, err, req, 500)
         }
@@ -183,12 +192,13 @@ export default {
             const subject = 'Account Confirmed'
             const text = `Your account has been confirmed`
 
-            emailService.sendEmail(to, subject, text).catch((err) => {
-                logger.error(`EMAIL_SERVICE`, {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    meta: err
-                })
-            })
+            const html = generateAccountConfirmedHtml();
+
+            emailService.sendEmail(to, subject, text, html).catch((err) => {
+                logger.error('EMAIL_SERVICE', {
+                    meta: err,
+                });
+            });
 
             httpResponse(req, res, 200, responseMessage.SUCCESS)
         } catch (err) {
@@ -218,7 +228,6 @@ export default {
 
             const accessToken = quicker.generateToken(
                 {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     userId: user.id
                 },
                 config.ACCESS_TOKEN.SECRET as string,
@@ -227,7 +236,6 @@ export default {
 
             const refreshToken = quicker.generateToken(
                 {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     userId: user.id
                 },
                 config.REFRESH_TOKEN.SECRET as string,
@@ -408,14 +416,15 @@ export default {
             const subject = 'Account Password Reset Requested'
             const text = `Hey ${user.name}, Please reset your account password by clicking on the link below\n\nLink will expire within 15 Minutes\n\n${resetUrl}`
 
-            emailService.sendEmail(to, subject, text).catch((err) => {
-                logger.error(`EMAIL_SERVICE`, {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    meta: err
-                })
-            })
+            const html = generatePasswordResetRequestHtml(user.name, resetUrl);
 
-            httpResponse(req, res, 200, responseMessage.SUCCESS,{ token: token, resetUrl: resetUrl})
+            emailService.sendEmail(to, subject, text, html).catch((err) => {
+                logger.error('EMAIL_SERVICE', {
+                    meta: err, 
+                });
+            });
+
+            httpResponse(req, res, 200, responseMessage.SUCCESS)
         } catch (err) {
             httpError(next, err, req, 500)
         }
@@ -465,12 +474,13 @@ export default {
             const subject = 'Account Password Reset'
             const text = `Hey ${user.name}, You account password has been reset successfully.`
 
-            emailService.sendEmail(to, subject, text).catch((err) => {
-                logger.error(`EMAIL_SERVICE`, {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    meta: err
-                })
-            })
+            const html = generatePasswordResetHtml(user.name);
+
+            emailService.sendEmail(to, subject, text, html).catch((err) => {
+                logger.error('EMAIL_SERVICE', {
+                    meta: err, 
+                });
+            });
 
             httpResponse(req, res, 200, responseMessage.SUCCESS)
         } catch (err) {
@@ -511,12 +521,14 @@ export default {
             const subject = 'Password Changed'
             const text = `Hey ${user.name}, You account password has been changed successfully.`
 
-            emailService.sendEmail(to, subject, text).catch((err) => {
-                logger.error(`EMAIL_SERVICE`, {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    meta: err
-                })
-            })
+            const html = generatePasswordChangedHtml(user.name);
+
+            emailService.sendEmail(to, subject, text, html).catch((err) => {
+                logger.error('EMAIL_SERVICE', {
+                    meta: err,
+                });
+            });
+
 
             httpResponse(req, res, 200, responseMessage.SUCCESS)
         } catch (err) {
