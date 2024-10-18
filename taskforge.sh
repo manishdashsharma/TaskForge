@@ -12,58 +12,97 @@ if [ ! -f docker-compose.dev.yml ]; then
   exit 1
 fi
 
-# Set prefixes for TaskForge resources
-TASKFORGE_IMAGE_PREFIX="taskforge"  # Change this to your image name prefix if necessary
+# Set resource names
+TASKFORGE_IMAGE_PREFIX="taskforge"
 MONGO_VOLUME="mongo-data"
 NETWORK_NAME="queue-net"
 
-# Notify the user about the cleanup process
-echo "Starting cleanup process for TaskForge..."
+# Function to clean up containers, images, volumes, and network
+cleanup() {
+  echo "Starting cleanup process for TaskForge..."
 
-# Stop all running TaskForge containers
-echo "Stopping all TaskForge containers..."
-docker stop mongo_container client server > /dev/null 2>&1
+  # Stop all running TaskForge containers
+  echo "Stopping all TaskForge containers..."
+  docker stop mongo_container client server > /dev/null 2>&1
 
-# Remove all TaskForge containers
-echo "Removing all TaskForge containers..."
-docker rm mongo_container client server > /dev/null 2>&1
+  # Remove all TaskForge containers
+  echo "Removing all TaskForge containers..."
+  docker rm mongo_container client server > /dev/null 2>&1
 
-# Remove all TaskForge images
-echo "Removing all TaskForge Docker images..."
-docker rmi $(docker images -q --filter "reference=mongo*") > /dev/null 2>&1
-docker rmi $(docker images -q --filter "reference=client*") > /dev/null 2>&1
-docker rmi $(docker images -q --filter "reference=server*") > /dev/null 2>&1
+  # Remove all TaskForge images
+  echo "Removing all TaskForge Docker images..."
+  docker rmi $(docker images -q --filter "reference=mongo*") > /dev/null 2>&1
+  docker rmi $(docker images -q --filter "reference=client*") > /dev/null 2>&1
+  docker rmi $(docker images -q --filter "reference=server*") > /dev/null 2>&1
 
-# Remove the MongoDB volume
-echo "Removing the MongoDB Docker volume..."
-docker volume rm $MONGO_VOLUME > /dev/null 2>&1
+  # Remove the MongoDB volume
+  echo "Removing the MongoDB Docker volume..."
+  docker volume rm $MONGO_VOLUME > /dev/null 2>&1
 
-# Optionally remove the TaskForge network
-echo "Removing the TaskForge Docker network..."
-docker network rm $NETWORK_NAME > /dev/null 2>&1
+  # Optionally remove the TaskForge network
+  echo "Removing the TaskForge Docker network..."
+  docker network rm $NETWORK_NAME > /dev/null 2>&1
 
-echo "Cleanup complete. All TaskForge containers, images, and volumes have been removed."
+  echo "Cleanup complete. All TaskForge containers, images, and volumes have been removed."
+}
 
-# Define the services to start (default: both server and client)
-SERVICES="server client"
+# Function to display the interactive menu
+show_menu() {
+  echo "Please select the service you want to run:"
+  echo "1) All (This will remove all containers and images and start everything from scratch. NOTE: It will take time)"
+  echo "2) Server (Only start the server)"
+  echo "3) Client (Only start the client)"
+  echo "4) Server & Client (Start both server and client)"
+  echo "5) Exit"
+  read -p "Enter your choice [1-5]: " choice
+}
 
-# Check if an argument is passed (server or client)
-if [ $# -eq 1 ]; then
-  if [ "$1" == "server" ]; then
-    SERVICES="server"
-  elif [ "$1" == "client" ]; then
-    SERVICES="client"
-  else
-    echo "Invalid argument: '$1'. Please use 'server' or 'client'."
-    exit 1
-  fi
+# Main script logic
+if [ $# -eq 0 ]; then
+  # Show the interactive menu if no argument is passed
+  while true; do
+    show_menu
+    case $choice in
+      1)
+        echo "You chose: All. Cleaning up and starting everything..."
+        cleanup
+
+        # Start all services and rebuild everything
+        docker-compose --env-file .env.development -f docker-compose.dev.yml up --build --force-recreate
+        echo "All services have been successfully rebuilt and started!"
+        break
+        ;;
+      2)
+        echo "You chose: Server. Starting only the server..."
+        SERVICES="server"
+        docker-compose --env-file .env.development -f docker-compose.dev.yml up $SERVICES
+        echo "Server has been successfully started!"
+        break
+        ;;
+      3)
+        echo "You chose: Client. Starting only the client..."
+        SERVICES="client"
+        docker-compose --env-file .env.development -f docker-compose.dev.yml up $SERVICES
+        echo "Client has been successfully started!"
+        break
+        ;;
+      4)
+        echo "You chose: Server & Client. Starting both server and client..."
+        SERVICES="server client"
+        docker-compose --env-file .env.development -f docker-compose.dev.yml up server client
+        echo "Server and Client have been successfully started!"
+        break
+        ;;
+      5)
+        echo "Exiting..."
+        exit 0
+        ;;
+      *)
+        echo "Invalid choice. Please select a valid option (1-5)."
+        ;;
+    esac
+  done
+else
+  echo "Usage: ./run.sh (Run the script without arguments for interactive mode)"
+  exit 1
 fi
-
-# Notify the user about the services starting
-echo "Starting $SERVICES using Docker Compose..."
-
-# Start the services with Docker Compose
-docker-compose --env-file .env.development -f docker-compose.dev.yml up  $SERVICES
-
-# Notify user of successful start
-echo "$SERVICES have been successfully started!"

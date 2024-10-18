@@ -141,7 +141,7 @@ export default {
 
             const newUser = await databaseService.registerUser(payload)
 
-            const confirmationUrl = `${config.FRONTEND_URL}/confirmation/${token}?code=${code}`
+            const confirmationUrl = `${config.FRONTEND_URL}/app/confirmation/${token}?code=${code}`
             const to = [emailAddress]
             const subject = 'Confirm Your Account'
             const text = `Hey ${name}, Please confirm your account by clicking on the link below\n\n${confirmationUrl}`
@@ -403,7 +403,7 @@ export default {
 
             await user.save()
 
-            const resetUrl = `${config.FRONTEND_URL}/reset-password/${token}`
+            const resetUrl = `${config.FRONTEND_URL}/aap/reset-password/${token}`
             const to = [emailAddress]
             const subject = 'Account Password Reset Requested'
             const text = `Hey ${user.name}, Please reset your account password by clicking on the link below\n\nLink will expire within 15 Minutes\n\n${resetUrl}`

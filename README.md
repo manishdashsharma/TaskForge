@@ -1,84 +1,87 @@
 # TaskForge 🚀
 
-**TaskForge** is a robust, open-source project management and issue tracking tool designed to streamline workflows, enhance collaboration, and drive productivity. With its user-friendly interface and customizable features, TaskForge empowers teams to stay organized and achieve their project goals efficiently. 🎯
+**TaskForge** is a powerful, open-source project management and issue tracking tool designed to streamline workflows, enhance team collaboration, and drive productivity. Its user-friendly interface and customizable features empower teams to stay organized and achieve their project goals efficiently. 🎯
 
 ## Features 🌟
 
-- **Task Management:** Create, assign, and track tasks with ease. ✅
-- **Customizable Workflows:** Tailor workflows to fit your team's specific needs. 🔧
-- **Collaboration Tools:** Share updates, comment on tasks, and collaborate seamlessly. 🤝
-- **Real-Time Notifications:** Stay informed about task updates and project changes. 🔔
-- **Advanced Reporting:** Generate detailed reports to track progress and performance. 📊
+- **Task Management:** Effortlessly create, assign, and track tasks to keep your team on the same page. ✅
+- **Customizable Workflows:** Tailor workflows to meet your team’s unique processes and needs. 🔧
+- **Collaboration Tools:** Share updates, leave comments on tasks, and work together seamlessly. 🤝
+- **Real-Time Notifications:** Stay in the loop with instant updates about task progress and project changes. 🔔
+- **Advanced Reporting:** Generate detailed reports to monitor project progress and team performance. 📊
 
 ## Getting Started with TaskForge 🛠️
 
 ### Prerequisites 📋
 
-- Ensure Docker is installed and running on your system. 🐳
-- Make sure you have the necessary Docker images for TaskForge.
+Before you start, make sure you have the following:
+
+- **Docker Installed:** TaskForge runs inside Docker containers, so ensure Docker is installed and running on your system. 🐳
+  - You can check if Docker is running by using this command:
+    ```bash
+    docker info
+    ```
+
+- **Docker Images:** Ensure you have the required Docker images for TaskForge available.
 
 ### Starting TaskForge 🚦
 
-1. **Start Your Docker Client:**
+You can start TaskForge interactively based on what components you need to run. Here's how:
 
-   Ensure that Docker is running. You can start Docker using the Docker Desktop application or by running Docker in your terminal. Check if Docker is running by executing:
-   ```bash
-   docker info
-   ```
+1. **Make the Startup Script Executable:**
 
-2. **Set Execute Permissions for the Startup Script:**
+   First, give the `taskforge.sh` script execute permissions:
 
-   Navigate to the directory containing the `taskforge.sh` script. Make it executable by running:
    ```bash
    chmod +x taskforge.sh
    ```
 
-3. **Start TaskForge:**
+2. **Run the Interactive Menu:**
 
-   You can start TaskForge in different ways based on your needs:
+   To run TaskForge interactively, simply execute the script:
 
-   - To start **both server and client**, run:
-     ```bash
-     ./taskforge.sh
-     ```
-   - To start **only the server**, run:
-     ```bash
-     ./taskforge.sh server
-     ```
-   - To start **only the client**, run:
-     ```bash
-     ./taskforge.sh client
-     ```
-
-   **Note:** ⚠️ The script will remove all Docker containers, images, volumes, and builds associated with TaskForge. Be very cautious as this may affect all Docker services and data associated with TaskForge. Ensure no other critical services are running in Docker before proceeding.
-
-   If you want to start TaskForge without deleting any Docker containers, use:
    ```bash
-   docker-compose --env-file .env.development -f docker-compose.dev.yml up --build 
+   ./taskforge.sh
    ```
 
-### Additional Notes 📝
+   You'll then be prompted to choose which services to run:
 
-- **Backup Data:** Before running the cleanup script, ensure you backup any important data. 💾
-- **Check Logs:** If you encounter issues, you can check Docker logs for more information:
+   ```text
+   Please select the service you want to run:
+   1) All (This will remove all containers and images and start everything from scratch. NOTE: It will take time)
+   2) Server (Only start the server)
+   3) Client (Only start the client)
+   4) Server & Client (Start both server and client)
+   5) Exit
+   Enter your choice [1-5]:
+   ```
+
+3. **Choose an Option:**
+
+   - **Option 1:** Start **All** — This will clean up any existing TaskForge containers, images, and volumes, then build everything from scratch. (⚠️ This option will take time.)
+   - **Option 2:** Start **only the server**.
+   - **Option 3:** Start **only the client**.
+   - **Option 4:** Start **both the server and client** without cleanup.
+   - **Option 5:** **Exit** the script.
+
+4. **Docker Commands:** If you want to manually start TaskForge without the script, you can run:
+   ```bash
+   docker-compose --env-file .env.development -f docker-compose.dev.yml up --build
+   ```
+
+### Docker Management Tips 📝
+
+- **Backup Data:** Before running any cleanup operation, ensure you backup critical data. 💾
+- **Check Logs for Errors:** If you face any issues during the setup or operation, you can check the Docker logs:
   ```bash
   docker logs <container_name>
   ```
 
-- **Docker Commands:** Familiarize yourself with basic Docker commands for better management:
-  - List running containers: `docker ps`
-  - List all containers: `docker ps -a`
-  - List all images: `docker images`
-  - Remove containers: `docker rm <container_id>`
-  - Remove images: `docker rmi <image_id>`
-
-## API Documentation 📄
-
-### Postman Documentation
+### API Documentation 📄
 
 To explore the TaskForge API, you can use the Postman collection provided. This will help you interact with the API endpoints seamlessly.
 
-- **[TaskForge Postman Collection](https://documenter.getpostman.com/view/26372308/2sAXxMftGK)** 
+- **[TaskForge Postman Collection](https://documenter.getpostman.com/view/26372308/2sAXxMftGK)**
 
 Make sure to import the collection into your Postman application to get started with testing and interacting with the TaskForge API.
 
@@ -92,4 +95,3 @@ We welcome contributions! Please fork the repository and submit a pull request f
 - [Archit Verma](https://github.com/architverma001) 📅
 - [Abhishek Kumar](https://github.com/abhishekkumar-githb) ✨
 - [Naima Noor](https://github.com/Naima-Noor) 💻
-
