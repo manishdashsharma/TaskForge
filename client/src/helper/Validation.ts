@@ -21,7 +21,7 @@ phoneNumber: Yup.string()
 
 const SigninSchema = Yup.object().shape({
 
-  email: Yup.string()
+  emailAddress: Yup.string()
   .required('Email is required')
   .email('Invalid email format'),
 

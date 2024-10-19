@@ -190,7 +190,7 @@ const SignUp: React.FC = () => {
               
               <div className='mt-4'>
                 <p className='font-poppins text-[15px] font-normal'>
-                  Already have an account? <Link to="/login" className='text-forge-darkGreen'>Log in here.</Link>
+                  Already have an account? <Link to="/app/sign-in" className='text-forge-darkGreen'>Log in here.</Link>
                 </p>
               </div>
             </div>
