@@ -14,16 +14,15 @@ import SignupImg from '../../../assets/SignUp.jpg';
 import { signupSchema } from '@/helper/Validation';
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { E164Number } from 'libphonenumber-js';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { SignUpapi } from '@/services/api.services';
 import toast from 'react-hot-toast';
-import EmailConfirmation from '../EmailConfirmation/EmailConfirmation';
 
 const SignUp: React.FC = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [phoneValue, setPhoneValue] = useState<E164Number | undefined>();
-  const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
  
   const { register, handleSubmit, setValue, formState: { errors, isValid } } = useForm({
@@ -44,7 +43,7 @@ const SignUp: React.FC = () => {
       const resp = await SignUpapi(payload);
       if (resp.success) {
         toast.success('Confirmation email sent successfully');
-        setIsFormSubmitted(true); 
+        navigate('/app/confirmation')
       } else {
         toast.error('Sign-up failed, please try again.');
       }
@@ -56,9 +55,6 @@ const SignUp: React.FC = () => {
 
 
   return (
-    isFormSubmitted ? (
-      <EmailConfirmation />
-    ) : (
       <div className='max-w-full min-h-screen'>
         <div className='flex flex-col md:flex-row h-screen'>
           <div className='w-full md:w-1/2 h-full p-2 overflow-y-auto'>
@@ -201,7 +197,6 @@ const SignUp: React.FC = () => {
           </div>
         </div>
       </div>
-    )
   );
 };
 
