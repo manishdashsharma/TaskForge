@@ -20,3 +20,18 @@ export interface SignUpData {
     };
   }
   
+  export interface ForgotPasswordData {
+    emailAddress: string;
+  
+  }
+
+  export interface ForgotPasswordResponse {
+    success: boolean;
+    statusCode: number;
+    request: {
+      ip: string;
+      method: string;
+      url: string;
+    };
+    message: string
+  }

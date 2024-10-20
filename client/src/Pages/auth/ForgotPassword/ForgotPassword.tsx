@@ -4,11 +4,14 @@ import TaskForge from '../../../assets/Taskforge.png'
 import ForgotImg from '../../../assets/Forgot.jpg'
 import FingerprintIcon from '../../../assets/Fingerprint.png'
 import toast from 'react-hot-toast'
+import { ForgotPasswordapi } from '@/services/api.services'
 
 const ForgotPassword: React.FC = () => {
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [isResendLoading, setIsResendLoading] = useState(false)
+    const [isCooldown, setIsCooldown] = useState(false)
+    const [isResendCooldown, setIsResendCooldown] = useState(false)
     const navigate = useNavigate()
 
     const handleResetPassword = async () => {
@@ -17,7 +20,6 @@ const ForgotPassword: React.FC = () => {
             return
         }
 
-        // Basic email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(email)) {
             toast.error('Please enter a valid email address.')
@@ -26,33 +28,51 @@ const ForgotPassword: React.FC = () => {
 
         setIsLoading(true)
 
-        // Simulate async API request for resetting password
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        try {
+            const response = await ForgotPasswordapi({ emailAddress: email })
+            if (response.success) {
+                toast.success('Reset instructions sent to your email.')
+                setIsCooldown(true)
 
-        setIsLoading(false)
-        toast.success('Reset instructions sent to your email.')
-        setEmail('')
+                setTimeout(() => {
+                    setIsCooldown(false)
+                }, 45000)
+            } else {
+                toast.error('Please check your email again.')
+            }
+        } catch (error) {
+            console.error('Error during forgot password:', error)
+            toast.error('An error occurred during forgot password. Please check the email address.')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleResendEmail = async () => {
-        if (!email) {
-            toast.error('Please enter your email to resend.')
-            return
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
-            toast.error('Please enter a valid email address.')
-            return
-        }
-
         setIsResendLoading(true)
+        setIsResendCooldown(true)
 
-        // Simulate async API request for resending email
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        console.log('Resending email to:', email);
 
-        setIsResendLoading(false)
-        toast.success('Reset email resent successfully!')
+        try {
+            const response = await ForgotPasswordapi({ emailAddress: email })
+
+            if (response.success) {
+                toast.success('Reset email resent successfully!');
+            } else {
+                toast.error('Failed to resend the email. Please check your email again.');
+            }
+        } catch (error) {
+            console.error('Error during resend email:', error);
+            const errorMessage = error?.response?.data?.message || 'An error occurred while resending the email. Please try again.';
+            toast.error(errorMessage);
+        } finally {
+            setIsResendLoading(false);
+
+            setTimeout(() => {
+                setIsResendCooldown(false);
+            }, 15000);
+        }
     }
 
     return (
@@ -106,20 +126,24 @@ const ForgotPassword: React.FC = () => {
 
                             <button
                                 onClick={handleResetPassword}
-                                disabled={isLoading}
+                                disabled={isLoading || isCooldown}
                                 className={`w-3/4 bg-forge-darkGreen text-white py-2 rounded-lg hover:bg-forge-green transition duration-200 ${
-                                    isLoading ? 'cursor-not-allowed opacity-50' : ''
+                                    isLoading || isCooldown
+                                        ? 'cursor-not-allowed opacity-50'
+                                        : ''
                                 }`}>
                                 {isLoading ? 'Sending...' : 'Reset Password'}
                             </button>
                         </div>
-                        
+
                         <div className="mt-4 flex justify-start space-x-2">
                             <span>Did you get the email? </span>
                             <span
                                 onClick={handleResendEmail}
                                 className={`cursor-pointer hover:underline font-poppins text-sm font-medium text-forge-darkGreen hover:underline underline decoration-forge-darkGreen ${
-                                    isResendLoading ? 'cursor-not-allowed opacity-50' : ''
+                                    isResendLoading || isResendCooldown
+                                        ? 'cursor-not-allowed opacity-50'
+                                        : ''
                                 }`}>
                                 {isResendLoading ? 'Resending...' : 'Resend Email'}
                             </span>
@@ -157,4 +181,4 @@ const ForgotPassword: React.FC = () => {
     )
 }
 
-export default ForgotPassword
+export default ForgotPassword;

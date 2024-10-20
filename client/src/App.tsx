@@ -8,6 +8,7 @@ import SignIn from './Pages/auth/SignIn/SignIn';
 import ProfilePage from './Pages/ProfilePage/ProfilePage';
 import ForgotPassword from './Pages/auth/ForgotPassword/ForgotPassword';
 import ResetPassword from './Pages/auth/ResetPassword/ResetPassword';
+import Organization from './Pages/Organization/Organization';
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           <Route path="sign-in" element={<SignIn />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password/:token" element={<ResetPassword />} />
+          <Route path="organization" element={<Organization />} />
         </Route>
         <Route path="account" element={<Outlet />}>
           <Route path="profile" element={<ProfilePage />} />
