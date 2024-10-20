@@ -11,7 +11,6 @@ import ResetPassword from './Pages/auth/ResetPassword/ResetPassword';
 import Error from './Pages/Error/Error';
 import EmailConfirmation from './Pages/auth/EmailConfirmation/EmailConfirmation';
 
-
 const App: React.FC = () => {
   return (
     <>

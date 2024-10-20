@@ -45,3 +45,11 @@ export interface SignInResponse extends Response {
     refreshToken: string;
   };
 }
+
+export interface ForgotPasswordData {
+  emailAddress: string;
+}
+
+export interface ForgotPasswordResponse extends Response {
+  data: null 
+}
